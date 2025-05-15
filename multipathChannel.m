@@ -1,35 +1,24 @@
-function receivedSignal = multipathChannel(transmittedSignal, params)
-    if ~isnumeric(transmittedSignal) || ~isvector(transmittedSignal)
-        error('[Multipath Channel] Переданный сигнал должен быть числовым вектором.');
-    end
-    if ~isstruct(params)
-        error('[Multipath Channel] Параметры канала должны быть переданы в виде структуры.');
-    end
-    requiredFields = {'numRays', 'noisePowerBW', 'bandwidth', 'carrierFrequency', 'c'};
-    for i = 1:length(requiredFields)
-        if ~isfield(params, requiredFields{i})
-            error('[Multipath Channel] В структуре параметров отсутствует поле ''%s''.', requiredFields{i});
-        end
-    end
-
-    L = length(transmittedSignal);
-    Ts = 1/params.bandwidth;
-    D = randi([10,500], 1, params.numRays);
-
-    [Dmin, ~] = min(D);
-    tau_sec = (D - Dmin) / params.c;
-    tau_samples = round(tau_sec / Ts);
+function receivedSignal = multipathChannel(txSignal, params)
+    L = length(txSignal);
+    Ts = 1 / params.bandwidth;
+    D = randi([10, 500], 1, params.numRays);
+    tauSamples = round(((D - min(D)) / params.c) / Ts);
     G = params.c ./ (4 * pi * D * params.carrierFrequency);
-    max_tau = max(tau_samples);
-    delayedSignals = zeros(params.numRays, L + max_tau);
 
+    delayed = zeros(params.numRays, L + max(tauSamples));
     for i = 1:params.numRays
-        startIndex = tau_samples(i) + 1;
-        endIndex = tau_samples(i) + L;
-        delayedSignals(i, startIndex:endIndex) = transmittedSignal * G(i);
+        idx = tauSamples(i) + (1:L);
+        delayed(i, idx) = G(i) * txSignal;
     end
 
-    multipathChannel = sum(delayedSignals, 1);
-    noise = wgn(1, length(multipathChannel), params.noisePowerBW, 'complex');
-    receivedSignal = multipathChannel + noise;
+    channelOut = sum(delayed, 1);
+    noise = wgn(1, length(channelOut), params.noisePowerBW, [], 'complex');
+    receivedSignal = channelOut + noise;
+    receivedSignal = receivedSignal(:);
+
+    if length(receivedSignal) > L
+        receivedSignal = receivedSignal(1:L);
+    elseif length(receivedSignal) < L
+        receivedSignal(end+1:L) = 0;
+    end
 end

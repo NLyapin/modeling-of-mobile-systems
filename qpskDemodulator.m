@@ -1,3 +1,7 @@
+%QPSKDEMODULATOR QPSK демодуляция комплексных символов.
+%   demodulatedBits = QPSKDEMODULATOR(receivedSymbols) преобразует входной
+%   вектор комплексных символов 'receivedSymbols' в битовую
+%   последовательность 'demodulatedBits', используя QPSK демодуляцию.
 function demodulatedBits = qpskDemodulator(receivedSymbols)
     if ~isnumeric(receivedSymbols) || ~isvector(receivedSymbols)
         error('[QPSK Demodulator] Входные символы должны быть числовым вектором.');

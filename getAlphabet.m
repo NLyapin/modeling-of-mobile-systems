@@ -1,4 +1,5 @@
-function [alphabet, bitsPerSymbol] = getAlphabet()
+%Возвращает алфавит и количество бит на символ.
+function[alphabet, bitPerSymbol] = getAlphabet()
     alphabet = ['a':'z', 'A':'Z', '0':'9', ' ', '.'];
-    bitsPerSymbol = ceil(log2(length(alphabet)));
+    bitPerSymbol = ceil(log2(length(alphabet)));
 end

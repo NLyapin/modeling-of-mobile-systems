@@ -1,3 +1,8 @@
+%Знаковое кодирование текстового сообщения.
+%   Входные аргументы:
+%       message - Вектор символов - текстовое сообщение.
+%   Выходные аргументы:
+%       encodedBits - Числовой вектор (содержащий 0 и 1) - закодированное сообщение.
 function encodedBits = symbolEncoder(message)
     [alphabet, bitsPerSymbol] = getAlphabet();
 

@@ -1,3 +1,8 @@
+%Декодирование битовой последовательности.
+%   Входные аргументы:
+%       encodedBits - Числовой вектор (содержащий 0 и 1) - закодированное сообщение.
+%   Выходные аргументы:
+%       decodedMessage - Вектор символов (строка) - декодированное сообщение.
 function decodedMessage = symbolDecoder(encodedBits)
     [alphabet, bitsPerSymbol] = getAlphabet();
 
@@ -23,4 +28,5 @@ function decodedMessage = symbolDecoder(encodedBits)
             decodedMessage = [decodedMessage, '?'];
         end
     end 
+
 end
